@@ -8,6 +8,7 @@ const internals = {};
  * @param path
  */
 internals.findPackageJson = (path) => {
+  console.log(`Looking for package.json in ${path}...`, process.cwd());
   return fs.readFileSync(join(path, 'package.json')).toString();
 };
 
