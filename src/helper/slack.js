@@ -13,18 +13,21 @@ const informSlack = async (release) => {
         icon_emoji: core.getInput('slack-icon-emoji'),
     });
 
-    let bodyContent = release.body;
+    let bodyContent = release.body || '';
     const hasRemoveImage = core.getInput('remove-images');
 
     bodyContent = convertTicketsToLinks(bodyContent);
 
-    if(hasRemoveImage) {
+    if (hasRemoveImage) {
         console.log('Removing images from release body...');
         bodyContent = bodyContent
             // Remove inline Markdown images
             .replace(/!\[([\s\S]*?)]\((https?:\/\/[^\s)]+)\)/g, '_-private image-_')
             // Remove raw GitHub attachment image URLs
-            .replace(/(https?:\/\/github\.com\/user-attachments\/assets\/[^\s]+)/g, '_-private attachment-_');
+            .replace(
+                /(https?:\/\/github\.com\/user-attachments\/assets\/[^\s]+)/g,
+                '_-private attachment-_',
+            );
     }
 
     const slackBlocks = await mack.markdownToBlocks(bodyContent);

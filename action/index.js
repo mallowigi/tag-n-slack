@@ -87679,18 +87679,21 @@ const informSlack = async (release) => {
         icon_emoji: getInput('slack-icon-emoji'),
     });
 
-    let bodyContent = release.body;
+    let bodyContent = release.body || '';
     const hasRemoveImage = getInput('remove-images');
 
     bodyContent = helper_convertTicketsToLinks(bodyContent);
 
-    if(hasRemoveImage) {
+    if (hasRemoveImage) {
         console.log('Removing images from release body...');
         bodyContent = bodyContent
             // Remove inline Markdown images
             .replace(/!\[([\s\S]*?)]\((https?:\/\/[^\s)]+)\)/g, '_-private image-_')
             // Remove raw GitHub attachment image URLs
-            .replace(/(https?:\/\/github\.com\/user-attachments\/assets\/[^\s]+)/g, '_-private attachment-_');
+            .replace(
+                /(https?:\/\/github\.com\/user-attachments\/assets\/[^\s]+)/g,
+                '_-private attachment-_',
+            );
     }
 
     const slackBlocks = await src.markdownToBlocks(bodyContent);
