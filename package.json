@@ -4,7 +4,16 @@
     "version": "0.0.2",
     "type": "module",
     "scripts": {
+        "watch": "npm-watch",
         "build": "ncc build src/index.js -o action"
+    },
+    "watch": {
+        "build": {
+            "patterns": [
+                "src"
+            ],
+            "extensions": "js,ts"
+        }
     },
     "dependencies": {
         "@actions/core": "^3.0.0",
@@ -17,6 +26,7 @@
     },
     "devDependencies": {
         "@vercel/ncc": "^0.38.4",
+        "npm-watch": "^0.13.0",
         "prettier": "^3.8.1"
     }
 }
