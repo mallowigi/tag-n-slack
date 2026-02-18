@@ -1,5 +1,5 @@
 const fs = require('node:fs');
-const { join } = require('node:path');
+const { join, resolve } = require('node:path');
 
 const internals = {};
 
@@ -8,8 +8,9 @@ const internals = {};
  * @param path
  */
 internals.findPackageJson = (path) => {
-  console.log(`Looking for package.json in ${path}...`, process.cwd());
-  return fs.readFileSync(join(path, 'package.json')).toString();
+  const fullPath = resolve(process.cwd(), path, 'package.json');
+  console.log(`Looking for package.json in ${fullPath}...`);
+  return fs.readFileSync(fullPath).toString();
 };
 
 /**
