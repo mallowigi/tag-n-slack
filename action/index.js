@@ -87513,63 +87513,7 @@ axios.default = axios;
 // this module should only have a default export
 /* harmony default export */ const lib_axios = (axios);
 
-;// CONCATENATED MODULE: external "node:path"
-const external_node_path_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:path");
-;// CONCATENATED MODULE: ./src/helper/getTicketConfig.js
-
-
-/**
- *
- * @returns {{ticketPrefixes: string[], ticketUrlTemplate: string}}
- */
-const getTicketConfig = () => {
-    const configInput = getInput('ticket-config') || '{}';
-    let config = {};
-
-    try {
-        config = JSON.parse(configInput);
-    } catch (err) {
-        console.error("Error parsing config:", err);
-    }
-
-    return config;
-}
-
-/* harmony default export */ const helper_getTicketConfig = (getTicketConfig);
-
-// EXTERNAL MODULE: ./node_modules/lodash/escapeRegExp.js
-var escapeRegExp = __nccwpck_require__(6195);
-;// CONCATENATED MODULE: ./src/helper/convertTicketsToLinks.js
-
-
-
-const ticketConfig = helper_getTicketConfig();
-
-const convertTicketsToLinks = (text) => {
-    if (!ticketConfig.ticketPrefixes || !ticketConfig.ticketUrlTemplate) {
-        console.log('No or invalid ticket configuration found. Skipping ticket link conversion...');
-
-        return text;
-    }
-
-    console.log('Rewriting ticket strings to links...')
-
-    const sanitizedPrefixes = ticketConfig.ticketPrefixes.map(prefix => escapeRegExp(prefix));
-    const prefixesPattern = sanitizedPrefixes.join('|'); // e.g. "CON|FUN|GRO"
-    const regex = new RegExp(`\\b(${prefixesPattern})-(\\d+)\\b`, 'g');
-
-    return text.replace(regex, (match) => {
-        const url = ticketConfig.ticketUrlTemplate.replace('{ticket}', match);
-
-        return `[${match}](${url})`;
-    });
-};
-
-/* harmony default export */ const helper_convertTicketsToLinks = (convertTicketsToLinks);
-
 ;// CONCATENATED MODULE: ./src/helper/release.js
-
-
 
 
 
@@ -87644,10 +87588,7 @@ internals.createGithubRelease = ({ version, message }) => {
                   repo: getInput('project-name'),
                   cli: true,
               }
-            : {
-                  dryRun: true,
-                  cli: true,
-              };
+            : {};
 
         options.auth = { token };
         gh_release(options, (err, result) => {
@@ -87666,6 +87607,58 @@ internals.createGithubRelease = ({ version, message }) => {
 
 // EXTERNAL MODULE: ./node_modules/@tryfabric/mack/build/src/index.js
 var src = __nccwpck_require__(587);
+;// CONCATENATED MODULE: ./src/helper/getTicketConfig.js
+
+
+/**
+ *
+ * @returns {{ticketPrefixes: string[], ticketUrlTemplate: string}}
+ */
+const getTicketConfig = () => {
+    const configInput = getInput('ticket-config') || '{}';
+    let config = {};
+
+    try {
+        config = JSON.parse(configInput);
+    } catch (err) {
+        console.error("Error parsing config:", err);
+    }
+
+    return config;
+}
+
+/* harmony default export */ const helper_getTicketConfig = (getTicketConfig);
+
+// EXTERNAL MODULE: ./node_modules/lodash/escapeRegExp.js
+var escapeRegExp = __nccwpck_require__(6195);
+;// CONCATENATED MODULE: ./src/helper/convertTicketsToLinks.js
+
+
+
+const ticketConfig = helper_getTicketConfig();
+
+const convertTicketsToLinks = (text) => {
+    if (!ticketConfig.ticketPrefixes || !ticketConfig.ticketUrlTemplate) {
+        console.log('No or invalid ticket configuration found. Skipping ticket link conversion...');
+
+        return text;
+    }
+
+    console.log('Rewriting ticket strings to links...')
+
+    const sanitizedPrefixes = ticketConfig.ticketPrefixes.map(prefix => escapeRegExp(prefix));
+    const prefixesPattern = sanitizedPrefixes.join('|'); // e.g. "CON|FUN|GRO"
+    const regex = new RegExp(`\\b(${prefixesPattern})-(\\d+)\\b`, 'g');
+
+    return text.replace(regex, (match) => {
+        const url = ticketConfig.ticketUrlTemplate.replace('{ticket}', match);
+
+        return `[${match}](${url})`;
+    });
+};
+
+/* harmony default export */ const helper_convertTicketsToLinks = (convertTicketsToLinks);
+
 ;// CONCATENATED MODULE: ./src/helper/slack.js
 
 
@@ -87761,6 +87754,8 @@ const informSlack = async (release) => {
 
 ;// CONCATENATED MODULE: external "node:fs"
 const external_node_fs_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:fs");
+;// CONCATENATED MODULE: external "node:path"
+const external_node_path_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:path");
 ;// CONCATENATED MODULE: ./src/helper/package.js
 
 
@@ -87825,7 +87820,55 @@ git_internals.getCurrentGitCommitMessage = () => {
 
 /* harmony default export */ const git = (git_internals);
 
+// EXTERNAL MODULE: ./node_modules/changelog-parser/index.js
+var changelog_parser = __nccwpck_require__(4642);
+;// CONCATENATED MODULE: ./src/helper/changelog.js
+
+
+
+
+
+const changelog_internals = {};
+
+/**
+ * Get the changelog content for a specific version.
+ * @param {string} version
+ * @param {string} path Path to the directory containing CHANGELOG.md
+ * @returns {Promise<string>}
+ */
+changelog_internals.getChangelogVersion = async (version, path = './') => {
+    const workspace = process.env.GITHUB_WORKSPACE || process.cwd();
+    const changelogPath = (0,external_node_path_namespaceObject.resolve)(workspace, path, 'CHANGELOG.md');
+
+    if (!external_node_fs_namespaceObject.existsSync(changelogPath)) {
+        console.warn(`CHANGELOG.md not found at ${changelogPath}`);
+        return undefined;
+    }
+
+    try {
+        const result = await changelog_parser({
+            filePath: changelogPath,
+            removeMarkdown: false,
+        });
+
+        const versionData = result.versions.find((v) => v.version === version);
+
+        if (versionData) {
+            return versionData.body.trim();
+        }
+
+        console.warn(`Version ${version} not found in CHANGELOG.md`);
+        return undefined;
+    } catch (err) {
+        console.error(`Error parsing CHANGELOG.md: ${err.message}`);
+        return undefined;
+    }
+};
+
+/* harmony default export */ const changelog = (changelog_internals);
+
 ;// CONCATENATED MODULE: ./src/index.js
+
 
 
 
@@ -87844,7 +87887,7 @@ const run = async () => {
             : git.getCurrentGitCommitHash();
         const message = helper_release.isReleaseStrategyGithubReleases()
             ? git.getCurrentGitCommitMessage()
-            : undefined;
+            : await changelog.getChangelogVersion(version, getInput('package-json-path'));
 
         // fetch existing releases
         releases = await helper_release.fetchGithubReleases();
@@ -87856,9 +87899,9 @@ const run = async () => {
             throw 'Skipping: Release already exists';
         }
 
-        console.log(`Creating Github release for ${version}...`);
-        release = await helper_release.createGithubRelease({ version, message });
-        // release = { name: version, body: message };
+        // console.log(`Creating Github release for ${version}...`);
+        // release = await releaseUtils.createGithubRelease({ version, message });
+        release = { name: version, body: message };
 
         console.log(`Informing new release for ${version} in Slack...`);
         await slack(release);
