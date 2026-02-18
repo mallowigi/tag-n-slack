@@ -87777,11 +87777,28 @@ package_internals.findPackageJson = (path) => {
     console.error(`Error: Could not find or read package.json at ${fullPath}. Error: ${err.message}`);
 
     try {
-        console.log(`Directory listing for ${workspace}:`);
-        const files = external_node_fs_namespaceObject.readdirSync(workspace);
-        files.forEach(file => {
-            console.log(` - ${file}`);
-        });
+        console.log(`Checking if directory ${workspace} exists: ${external_node_fs_namespaceObject.existsSync(workspace)}`);
+        if (external_node_fs_namespaceObject.existsSync(workspace)) {
+            console.log(`Directory listing for ${workspace}:`);
+            const files = external_node_fs_namespaceObject.readdirSync(workspace);
+            if (files.length === 0) {
+                console.log(' - (directory is empty)');
+                
+                // List parent directory to see if we're in the wrong place
+                const parentDir = (0,external_node_path_namespaceObject.resolve)(workspace, '..');
+                console.log(`Directory listing for parent directory ${parentDir}:`);
+                const parentFiles = external_node_fs_namespaceObject.readdirSync(parentDir);
+                parentFiles.forEach(file => {
+                    console.log(` - ${file}`);
+                });
+            } else {
+                files.forEach(file => {
+                    console.log(` - ${file}`);
+                });
+            }
+        } else {
+            console.log(`Directory ${workspace} does not exist.`);
+        }
     } catch (readDirErr) {
         console.error(`Error listing directory ${workspace}: ${readDirErr.message}`);
     }

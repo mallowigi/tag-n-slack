@@ -20,11 +20,28 @@ internals.findPackageJson = (path) => {
     console.error(`Error: Could not find or read package.json at ${fullPath}. Error: ${err.message}`);
 
     try {
-        console.log(`Directory listing for ${workspace}:`);
-        const files = fs.readdirSync(workspace);
-        files.forEach(file => {
-            console.log(` - ${file}`);
-        });
+        console.log(`Checking if directory ${workspace} exists: ${fs.existsSync(workspace)}`);
+        if (fs.existsSync(workspace)) {
+            console.log(`Directory listing for ${workspace}:`);
+            const files = fs.readdirSync(workspace);
+            if (files.length === 0) {
+                console.log(' - (directory is empty)');
+                
+                // List parent directory to see if we're in the wrong place
+                const parentDir = resolve(workspace, '..');
+                console.log(`Directory listing for parent directory ${parentDir}:`);
+                const parentFiles = fs.readdirSync(parentDir);
+                parentFiles.forEach(file => {
+                    console.log(` - ${file}`);
+                });
+            } else {
+                files.forEach(file => {
+                    console.log(` - ${file}`);
+                });
+            }
+        } else {
+            console.log(`Directory ${workspace} does not exist.`);
+        }
     } catch (readDirErr) {
         console.error(`Error listing directory ${workspace}: ${readDirErr.message}`);
     }
