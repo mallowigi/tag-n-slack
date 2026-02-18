@@ -1,8 +1,8 @@
-const core = require('@actions/core');
-const informSlack = require('./helper/slack');
-const releaseUtils = require('./helper/release');
-const packageUtils = require('./helper/package');
-const gitUtils = require('./helper/git');
+import * as core from '@actions/core';
+import informSlack from './helper/slack.js';
+import releaseUtils from './helper/release.js';
+import packageUtils from './helper/package.js';
+import gitUtils from './helper/git.js';
 
 const run = async () => {
     console.log(`Starting release process using ${releaseUtils.getReleaseStrategy()} strategy...`);

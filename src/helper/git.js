@@ -1,4 +1,4 @@
-const { execSync } = require('child_process');
+import { execSync } from 'node:child_process';
 
 const internals = {};
 
@@ -20,4 +20,4 @@ internals.getCurrentGitCommitMessage = () => {
     return execSync('git log -1 --pretty=%B', { cwd: process.cwd() }).toString().trim();
 };
 
-module.exports = internals;
+export default internals;

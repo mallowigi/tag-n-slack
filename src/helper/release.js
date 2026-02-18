@@ -1,8 +1,8 @@
-const core = require('@actions/core');
-const github = require('@actions/github');
-const ghRelease = require('gh-release');
-const axios = require('axios');
-const convertTicketsToLinks = require('./convertTicketsToLinks');
+import * as core from '@actions/core';
+import * as github from '@actions/github';
+import ghRelease from 'gh-release';
+import axios from 'axios';
+import convertTicketsToLinks from './convertTicketsToLinks.js';
 
 const STRATEGY_INPUT_NAME = 'version-increment-strategy';
 
@@ -88,4 +88,4 @@ internals.createGithubRelease = ({ version, message }) => {
     });
 };
 
-module.exports = internals;
+export default internals;

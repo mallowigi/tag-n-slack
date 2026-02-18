@@ -1,8 +1,8 @@
-const { IncomingWebhook } = require('@slack/webhook');
-const core = require('@actions/core');
-const releaseUtils = require('./release');
-const mack = require('@tryfabric/mack');
-const convertTicketsToLinks = require('./convertTicketsToLinks');
+import { IncomingWebhook } from '@slack/webhook';
+import * as core from '@actions/core';
+import releaseUtils from './release.js';
+import mack from '@tryfabric/mack';
+import convertTicketsToLinks from './convertTicketsToLinks.js';
 
 const informSlack = async (release) => {
     const title = releaseUtils.isReleaseStrategyChangelogFile()
@@ -85,4 +85,4 @@ const informSlack = async (release) => {
     }
 };
 
-module.exports = informSlack;
+export default informSlack;

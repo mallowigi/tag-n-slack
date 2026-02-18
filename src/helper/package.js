@@ -1,5 +1,5 @@
-const fs = require('node:fs');
-const { join, resolve } = require('node:path');
+import fs from 'node:fs';
+import { resolve } from 'node:path';
 
 const internals = {};
 
@@ -23,4 +23,4 @@ internals.getPackageVersion = (path) => {
   return JSON.parse(packageJson).version;
 };
 
-module.exports = internals;
+export default internals;

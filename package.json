@@ -2,6 +2,7 @@
     "name": "Slackalaka",
     "description": "Creates a new Tag with a Changelog from `CHANGELOG.md` using the `version` from `package.json` and notifies Slack about the release.",
     "version": "0.0.2",
+    "type": "module",
     "scripts": {
         "build": "ncc build src/index.js -o action"
     },

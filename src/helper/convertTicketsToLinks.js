@@ -1,5 +1,5 @@
-const getTicketConfig = require('./getTicketConfig');
-const escapeRegExp = require('lodash/escapeRegExp');
+import getTicketConfig from './getTicketConfig.js';
+import escapeRegExp from 'lodash/escapeRegExp.js';
 
 const ticketConfig = getTicketConfig();
 
@@ -23,4 +23,4 @@ const convertTicketsToLinks = (text) => {
     });
 };
 
-module.exports = convertTicketsToLinks;
+export default convertTicketsToLinks;
