@@ -87854,7 +87854,19 @@ changelog_internals.getChangelogVersion = async (version, path = './') => {
         const versionData = result.versions.find((v) => v.version === version);
 
         if (versionData) {
-            return versionData.body.trim();
+            let body = versionData.body.trim();
+
+            // Check if there are any version subheaders (###) within the body
+            // These usually look like '### [0.182.2]' or '### v0.182.2'
+            const subversionHeaderRegex = /^###\s+\[?v?\d+\.\d+\.\d+\]?/m;
+            const match = body.match(subversionHeaderRegex);
+
+            if (match) {
+                // Truncate the body before the first subversion header
+                body = body.substring(0, match.index).trim();
+            }
+
+            return body;
         }
 
         console.warn(`Version ${version} not found in CHANGELOG.md`);
