@@ -87513,6 +87513,8 @@ axios.default = axios;
 // this module should only have a default export
 /* harmony default export */ const lib_axios = (axios);
 
+;// CONCATENATED MODULE: external "node:path"
+const external_node_path_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:path");
 ;// CONCATENATED MODULE: ./src/helper/getTicketConfig.js
 
 
@@ -87566,6 +87568,7 @@ const convertTicketsToLinks = (text) => {
 /* harmony default export */ const helper_convertTicketsToLinks = (convertTicketsToLinks);
 
 ;// CONCATENATED MODULE: ./src/helper/release.js
+
 
 
 
@@ -87752,8 +87755,6 @@ const informSlack = async (release) => {
 
 ;// CONCATENATED MODULE: external "node:fs"
 const external_node_fs_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:fs");
-;// CONCATENATED MODULE: external "node:path"
-const external_node_path_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:path");
 ;// CONCATENATED MODULE: ./src/helper/package.js
 
 
@@ -87850,7 +87851,8 @@ const run = async () => {
         }
 
         console.log(`Creating Github release for ${version}...`);
-        release = await helper_release.createGithubRelease({ version, message });
+        // release = await releaseUtils.createGithubRelease({ version, message });
+        release = { name: version, body: message };
 
         console.log(`Informing new release for ${version} in Slack...`);
         await slack(release);

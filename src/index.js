@@ -29,7 +29,8 @@ const run = async () => {
         }
 
         console.log(`Creating Github release for ${version}...`);
-        release = await releaseUtils.createGithubRelease({ version, message });
+        // release = await releaseUtils.createGithubRelease({ version, message });
+        release = { name: version, body: message };
 
         console.log(`Informing new release for ${version} in Slack...`);
         await informSlack(release);
