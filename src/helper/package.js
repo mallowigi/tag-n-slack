@@ -12,13 +12,23 @@ internals.findPackageJson = (path) => {
   const fullPath = resolve(workspace, path, 'package.json');
   console.log(`Looking for package.json in ${fullPath}...`);
   console.log(`Current Working Directory (cwd): ${process.cwd()}`);
-
   console.log(`GitHub Workspace (GITHUB_WORKSPACE): ${process.env.GITHUB_WORKSPACE || 'Not set'}`);
 
   try {
     return fs.readFileSync(fullPath).toString();
   } catch (err) {
     console.error(`Error: Could not find or read package.json at ${fullPath}. Error: ${err.message}`);
+
+    try {
+        console.log(`Directory listing for ${workspace}:`);
+        const files = fs.readdirSync(workspace);
+        files.forEach(file => {
+            console.log(` - ${file}`);
+        });
+    } catch (readDirErr) {
+        console.error(`Error listing directory ${workspace}: ${readDirErr.message}`);
+    }
+
     throw err;
   }
 };
