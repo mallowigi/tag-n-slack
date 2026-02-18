@@ -3,6 +3,7 @@ import informSlack from './helper/slack.js';
 import releaseUtils from './helper/release.js';
 import packageUtils from './helper/package.js';
 import gitUtils from './helper/git.js';
+import changelogUtils from './helper/changelog.js';
 
 const run = async () => {
     console.log(`Starting release process using ${releaseUtils.getReleaseStrategy()} strategy...`);
@@ -16,7 +17,7 @@ const run = async () => {
             : gitUtils.getCurrentGitCommitHash();
         const message = releaseUtils.isReleaseStrategyGithubReleases()
             ? gitUtils.getCurrentGitCommitMessage()
-            : undefined;
+            : await changelogUtils.getChangelogVersion(version, core.getInput('package-json-path'));
 
         // fetch existing releases
         releases = await releaseUtils.fetchGithubReleases();
@@ -28,7 +29,7 @@ const run = async () => {
             throw 'Skipping: Release already exists';
         }
 
-        console.log(`Creating Github release for ${version}...`);
+        // console.log(`Creating Github release for ${version}...`);
         // release = await releaseUtils.createGithubRelease({ version, message });
         release = { name: version, body: message };
 

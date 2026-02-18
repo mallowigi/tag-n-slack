@@ -87644,7 +87644,10 @@ internals.createGithubRelease = ({ version, message }) => {
                   repo: getInput('project-name'),
                   cli: true,
               }
-            : {};
+            : {
+                  dryRun: true,
+                  cli: true,
+              };
 
         options.auth = { token };
         gh_release(options, (err, result) => {
@@ -87854,8 +87857,8 @@ const run = async () => {
         }
 
         console.log(`Creating Github release for ${version}...`);
-        // release = await releaseUtils.createGithubRelease({ version, message });
-        release = { name: version, body: message };
+        release = await helper_release.createGithubRelease({ version, message });
+        // release = { name: version, body: message };
 
         console.log(`Informing new release for ${version} in Slack...`);
         await slack(release);
